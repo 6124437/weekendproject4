@@ -7,7 +7,7 @@ import { environment } from '..//environments/environment';
 
 const API_URL = 'http://localhost:3000/token-contract-address';
 const API_URL_MINT = 'http://localhost:3000/request-tokens';
-const API_URL_DELEGATE = 'http://localhost:3000/delegate';
+const API_URL_DELEGATE = 'http://localhost:3000/delegate-tokens';
 
 @Component({
   selector: 'app-root',
@@ -102,13 +102,14 @@ export class AppComponent {
   }
 
   // TODO
-  delegate(address: string) {
-    const delegateTx = this.tokenContract
-      ?.connect(this.userWallet!)
-      ['delegate'](address);
-    delegateTx.wait();
-    // return this.http.post<{result: }>(API_URL_DELEGATE, {account: account})
-    console.log('Delegate');
+  async delegate(address: string) {
+    const body = { address: address };
+    console.log('BODY', body);
+    return this.http
+      .post<{ result: string }>(API_URL_DELEGATE, body)
+      .subscribe((result) => {
+        console.log('tx hash = ' + result.result);
+      });
   }
 
   //TODO

@@ -4,8 +4,8 @@ import { ethers } from 'ethers';
 import * as tokenJson from './/assets/MyToken.json';
 import * as ballotJson from './/assets/Ballot.json';
 
-const TOKEN_CONTRACT_ADDRESS = '0x0C1d158A2252Dd0ecaF24732F6785fFBD519cF76';
-const BALLOT_CONTRACT_ADDRESS = '0x8E109007AeF88fACD7Ac2ddF80C35D0C06B06fd2';
+const TOKEN_CONTRACT_ADDRESS = '0xF87E4c0d83f54e51FE5e911FaF4ce9D4D8e05310';
+const BALLOT_CONTRACT_ADDRESS = '0xE6082A4E83D1E093E892fb3DE52CccF2B4D8A47C';
 
 @Injectable()
 export class AppService {
@@ -67,12 +67,10 @@ export class AppService {
     return txReceipt.status == 1 ? 'Completed' : 'Reverted';
   }
 
-  async delegateTokens() {
+  async delegateTokens(address: string) {
     const privateKey = this.configService.get<string>('PRIVATE_KEY');
     const wallet = new ethers.Wallet(privateKey).connect(this.provider);
-    const tx = await this.tokenContract
-      .connect(wallet)
-      .delegate(wallet.address);
+    const tx = await this.tokenContract.connect(wallet).delegate(address);
     const txReceipt = await tx.wait();
     return txReceipt.status == 1 ? 'Completed' : 'Reverted';
   }

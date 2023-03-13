@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CastVoteDto } from 'dtos/CastVoteDto';
 import { RequestTokensDto } from 'dtos/RequestTokensDto';
+import { DelegateTokensDto } from 'dtos/DelegateTokensDto';
 import { AppService } from './app.service';
 
 @Controller()
@@ -41,8 +42,8 @@ export class AppController {
   }
 
   @Post('/delegate-tokens')
-  async delegateTokens() {
-    return { result: this.appService.delegateTokens() };
+  async delegateTokens(@Body() body: DelegateTokensDto) {
+    return { result: this.appService.delegateTokens(body.address) };
   }
 
   @Post('/cast-vote')
