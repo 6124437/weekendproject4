@@ -57,7 +57,7 @@ export class AppService {
   }
 
   async requestTokens(address: string, amount: number) {
-    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+    const privateKey = this.getPrivateKey();
     console.log('privateKey', privateKey);
     const wallet = new ethers.Wallet(privateKey).connect(this.provider);
     const tx = await this.tokenContract
@@ -68,7 +68,7 @@ export class AppService {
   }
 
   async delegateTokens(address: string) {
-    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+    const privateKey = this.getPrivateKey();
     const wallet = new ethers.Wallet(privateKey).connect(this.provider);
     const tx = await this.tokenContract.connect(wallet).delegate(address);
     const txReceipt = await tx.wait();
@@ -76,10 +76,19 @@ export class AppService {
   }
 
   async castVote(proposal: number, amount: number) {
-    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+    const privateKey = this.getPrivateKey();
     const wallet = new ethers.Wallet(privateKey).connect(this.provider);
     const tx = await this.ballotContract.connect(wallet).vote(proposal, amount);
     const txReceipt = await tx.wait();
     return txReceipt.status == 1 ? 'Completed' : 'Reverted';
+  }
+
+  getPrivateKey(){
+    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+    console.log(privateKey);
+    if (!privateKey || privateKey.length <= 0) {
+      throw new Error('Private key missing');
+    }
+    return privateKey;
   }
 }
