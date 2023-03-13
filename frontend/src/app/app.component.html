@@ -1,12 +1,5 @@
 <div class="px-4 py-5 my-5 text-center">
-  <img
-    class="d-block mx-auto mb-4"
-    src="/docs/5.2/assets/brand/bootstrap-logo.svg"
-    alt=""
-    width="72"
-    height="57"
-  />
-  <h1 class="display-5 fw-bold">Hello</h1>
+  <h1 class="display-5 fw-bold">Ballot Vote</h1>
   <div class="col-lg-6 mx-auto">
     <p *ngIf="blockNumber && blockNumber > 0" class="lead mb-4">
       block number is <strong>{{ blockNumber }}</strong
@@ -21,7 +14,7 @@
       {{ userWallet ? "Create another" : "Create" }} Wallet
     </button>
 
-    <div class="card" *ngIf="userWallet" style="width: 18rem">
+    <div class="card mt-4 mx-auto" *ngIf="userWallet">
       <div class="card-body">
         <h5 class="card-title">User Wallet GM</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{ userWallet.address }}</h6>
@@ -32,16 +25,55 @@
           class="btn btn-danger btn-1g px-4 gap-3 my-4"
           (click)="requestTokens(mintAmount.value)"
         >
-          Request tokens
+          Request voting tokens
         </button>
         <p>Amount:</p>
-        <input #mintAmount type="number" min="0" max="10" class="input" />
+        <input #mintAmount type="number" min="0" max="1000" class="input" />
       </div>
     </div>
 
-    <div class="card" *ngIf="tokenContractAddress" style="width: 18rem">
+    <div *ngIf="userWallet" class="card mt-4 mx-auto">
+      <div class="card-body">
+        <h5 class="card-title">Delegate</h5>
+        <p class="card-text">Token Balance: {{ userTokenBalance }} MKT</p>
+        <p>Delegate to:</p>
+        <input #address type="text" class="input col-lg-6" />
+        <p></p>
+        <button
+          *ngIf="address"
+          type="button"
+          class="btn btn-success btn-lg px-4 gap-3 my-4"
+          (click)="delegate(address.value)"
+        >
+          Delegate
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="userWallet" class="card mt-4 mx-auto">
+      <div class="card-body">
+        <h5 class="card-title">Vote</h5>
+        <p class="card-text">Voting power: {{ votingPower }}</p>
+        <p>Proposal #:</p>
+        <input #proposal type="number" min="0" max="3" class="input" />
+        <p>Votes:</p>
+        <input #votes type="number" min="0" max="10000" class="input" />
+        <p></p>
+        <button
+          *ngIf="votes"
+          type="button"
+          class="btn btn-primary btn-lg px-4 gap-3 my-4"
+          (click)="vote(proposal.value, votes.value)"
+        >
+          Vote
+        </button>
+      </div>
+    </div>
+
+    <div class="card mt-4 mx-auto" *ngIf="tokenContractAddress">
       <div class="card-body">
         <h5 class="card-title">Token Contract</h5>
+        a
         <h6 class="card-subtitle mb-2 text-muted">
           {{ tokenContractAddress }}
         </h6>
@@ -50,7 +82,7 @@
       </div>
     </div>
 
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
       <button
         type="button"
         class="btn btn-primary btn-lg px-4 gap-3"
@@ -63,7 +95,7 @@
         class="btn btn-outline-secondary btn-lg px-4"
         (click)="clearBlock()"
       >
-        Clear
+        cl Clear
       </button>
     </div>
   </div>

@@ -1,6 +1,4 @@
-export class RequestTokensDto
- {
-    address: string;
-    amount: number
-    
+export class RequestTokensDto {
+  address: string;
+  amount: number;
 }

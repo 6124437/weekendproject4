@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Wallet, Contract, ethers, utils, BigNumber } from 'ethers';
 import { HttpClient } from '@angular/common/http';
-import tokenJson from '..//assets/MyToken.json';
+import tokenJson from '../assets/MyToken.json';
 
 import { environment } from '..//environments/environment';
 
 const API_URL = 'http://localhost:3000/token-contract-address';
 const API_URL_MINT = 'http://localhost:3000/request-tokens';
+const API_URL_DELEGATE = 'http://localhost:3000/delegate';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,8 @@ export class AppComponent {
   tokenContractAddress: string | undefined;
   tokenContract: Contract | undefined;
   tokenTotalSupply: number | string | undefined;
+  votingPower: number | undefined;
+  ballotContract: Contract | undefined;
 
   privateKey = environment.privateKey;
   alchemyApiKey = environment.alchemyApiKey;
@@ -32,25 +35,12 @@ export class AppComponent {
       this.alchemyApiKey
     );
 
-    //const privateKey = 'PRIVATE_KEY';
+    console.log(this.privateKey);
     if (!this.privateKey || this.privateKey.length <= 0) {
       throw new Error('Private key missing');
     }
     this.connectWallet(this.privateKey);
   }
-
-  // constructor(private http: HttpClient) {
-  //   this.provider = new ethers.providers.AlchemyProvider(
-  //     'goerli',
-  //     'ALCHEMY_API_KEY'
-  //   );
-
-  //   const privateKey = 'PRIVATE_KEY';
-  //   if (!privateKey || privateKey.length <= 0) {
-  //     throw new Error('Private key missing');
-  //   }
-  //   this.connectWallet(privateKey);
-  // }
 
   getTokenAddres() {
     return this.http.get<{ address: string }>(API_URL);
@@ -103,10 +93,29 @@ export class AppComponent {
 
   requestTokens(amount: string) {
     const body = { address: this.userWallet?.address, amount: amount };
+    console.log('BODY', body);
     return this.http
       .post<{ result: string }>(API_URL_MINT, body)
       .subscribe((result) => {
         console.log('tx hash = ' + result.result);
       });
+  }
+
+  // TODO
+  delegate(address: string) {
+    const delegateTx = this.tokenContract
+      ?.connect(this.userWallet!)
+      ['delegate'](address);
+    delegateTx.wait();
+    // return this.http.post<{result: }>(API_URL_DELEGATE, {account: account})
+    console.log('Delegate');
+  }
+
+  //TODO
+  async vote(proposal: string, votes: string) {
+    const voteTx = await this.ballotContract
+      ?.connect(this.userWallet!)
+      ['vote'](parseInt(proposal), parseInt(votes));
+    await voteTx.wait();
   }
 }
