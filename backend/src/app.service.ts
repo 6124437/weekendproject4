@@ -33,6 +33,7 @@ export class AppService {
     return this.tokenContract.address;
   }
   getBallotContractAddress(): string {
+    // adding a comment for the demo
     return this.ballotContract.address;
   }
 
